@@ -3,19 +3,61 @@
 
 #include "pch.h"
 #include <iostream>
+#include <memory>
+#include <chrono>
+#include <vector>
+#include <random>
+#include <algorithm>
+#include <execution>
+
+void sortParallelRef(std::vector<double>&& arr) {
+	std::sort(std::execution::par, arr.begin(), arr.end());
+}
+void sortRef(std::vector<double>&& arr) {
+	std::sort(arr.begin(), arr.end());
+}
+void sortCopy(std::vector<double> arr) {
+	std::sort(arr.begin(), arr.end());
+}
+
+std::vector<double> randomNumbers() {
+	const int nrolls = 10 * 1000000;  // n * 1 million
+
+	std::default_random_engine generator;
+	std::normal_distribution<double> distribution(1.0, 100.0);
+
+	std::vector<double> p;
+
+	for (int i = 0; i < nrolls; ++i) {
+		p.push_back(distribution(generator));
+	}
+	std::cout << " vector of " << nrolls << " size elements." << "\n";
+
+	return p;
+}
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	std::cout << "Start generating random numbers: ";
+
+	auto vettore = randomNumbers();
+	auto vettore2 = vettore;
+
+	//std::cout << "Start sortCopy()...";
+	//auto start = std::chrono::steady_clock::now();
+	//sortCopy(vettore);
+	//auto end = std::chrono::steady_clock::now();
+	//std::cout << "executed in " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms\n";
+	
+	std::cout << "Start sortRef()... ";
+	auto start = std::chrono::steady_clock::now();
+	sortRef(std::move(vettore));
+	auto end = std::chrono::steady_clock::now();
+	std::cout << "executed in " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms\n";
+
+	std::cout << "Start sortParallelRef()... ";
+	auto a = std::chrono::steady_clock::now();
+	sortParallelRef(std::move(vettore2));
+	auto b = std::chrono::steady_clock::now();
+	std::cout << "executed in " << std::chrono::duration_cast<std::chrono::milliseconds>(b - a).count() << " ms\n";
 }
-
-// Per eseguire il programma: CTRL+F5 oppure Debug > Avvia senza eseguire debug
-// Per eseguire il debug del programma: F5 oppure Debug > Avvia debug
-
-// Suggerimenti per iniziare: 
-//   1. Usare la finestra Esplora soluzioni per aggiungere/gestire i file
-//   2. Usare la finestra Team Explorer per connettersi al controllo del codice sorgente
-//   3. Usare la finestra di output per visualizzare l'output di compilazione e altri messaggi
-//   4. Usare la finestra Elenco errori per visualizzare gli errori
-//   5. Passare a Progetto > Aggiungi nuovo elemento per creare nuovi file di codice oppure a Progetto > Aggiungi elemento esistente per aggiungere file di codice esistenti al progetto
-//   6. Per aprire di nuovo questo progetto in futuro, passare a File > Apri > Progetto e selezionare il file con estensione sln
