@@ -56,8 +56,13 @@ int main()
 	std::cout << "executed in " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms\n";
 
 	std::cout << "Start sortParallelRef()... ";
-	auto a = std::chrono::steady_clock::now();
+	start = std::chrono::steady_clock::now();
 	sortParallelRef(std::move(vettore2));
-	auto b = std::chrono::steady_clock::now();
-	std::cout << "executed in " << std::chrono::duration_cast<std::chrono::milliseconds>(b - a).count() << " ms\n";
+	end = std::chrono::steady_clock::now();
+	std::cout << "executed in " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms\n";
+
+
+	//Start generating random numbers : vector of 10000000 size elements.
+	//	Start sortRef()... executed in 1385 ms
+	//	Start sortParallelRef()... executed in 292 ms
 }
